@@ -24,7 +24,6 @@
         .nav-button:hover { transform: translateY(-3px); border-color: var(--accent); }
         .icon { width: 45px; height: 45px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
         
-        /* حاوية التطبيق النشط */
         #appContainer { display: none; width: 100%; min-height: 100vh; background: white; }
         .back-bar { 
             background: var(--primary); color: white; padding: 15px 20px; 
@@ -32,7 +31,6 @@
             font-weight: bold; position: sticky; top: 0; z-index: 9999;
         }
 
-        /* تنسيق نافذة المطور الجديد */
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal-content { 
             background: white; padding: 0; border-radius: 24px; width: 85%; max-width: 350px; 
@@ -189,7 +187,6 @@
 </div>
 
 <script>
-    // ربط الدوال بـ window لضمان عملها داخل الحقن المباشر
     window.trans = { 
         ar: { start: "بدء", reset: "حذف", preMsg: "باقي دقيقتين، يرجى طلب أربع عبوات من مصلحة البليماط.", scale: "الميزان", auto1: "أوتوكلاف 1", auto2: "أوتوكلاف 2" },
         fr: { start: "Démarrer", reset: "Effacer", preMsg: "Il reste 2 min, demandez 4 poches au Plumat.", scale: "Balance", auto1: "Autoclave 1", auto2: "Autoclave 2" }
@@ -199,7 +196,6 @@
     window.aCtx = null; window.osc = null; window.vib = null;
 
     window.toggleM = function(id, s) { document.getElementById(id).style.display = s ? 'flex' : 'none'; };
-    
     window.setL = function(l) { 
         window.lang = l; 
         document.getElementById('alarmAppContent').style.direction = l==='ar'?'rtl':'ltr';
@@ -240,7 +236,6 @@
 
     window.stopS = function() { if(window.osc){window.osc.stop(); window.osc=null;} if(window.vib) clearInterval(window.vib); window.toggleM('alarmM', false); };
 
-    // تشغيل العداد
     if(window.timerInt) clearInterval(window.timerInt);
     window.timerInt = setInterval(() => {
         const now = Date.now();
@@ -270,16 +265,14 @@
     document.getElementById('timeInput').value = it; document.getElementById('liveClock').innerText = it;
 </script>
 </script>
+
     <script id="code_tasks" type="text/plain"><div id="tasksAppContainer">
     <style>
         #tasksAppContainer { --primary: #1a73e8; --success: #25d366; --bg: #f1f5f9; --danger: #e11d48; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); padding: 10px; }
         .container-task { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        
-        /* إصلاح تداخل الزر مع العنوان */
         .header-task { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px; gap: 10px; }
         .lang-btn-task { background: #475569; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold; white-space: nowrap; }
         .header-task h2 { font-size: 1.2rem; margin: 0; color: #1e293b; }
-
         .setup-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; background: #f8fafc; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .lunch-section { background: #fffbeb; border: 1px solid #fef3c7; padding: 15px; border-radius: 15px; margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .input-box { display: flex; flex-direction: column; }
@@ -290,8 +283,7 @@
         .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; display: none; }
         .whatsapp-btn { background: var(--success); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
         .pdf-btn { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .task-card { background: white; border: 2px solid #f1f5f9; border-radius: 15px; padding: 15px; margin-bottom: 15px; position: relative; }
-        .duration-tag { position: absolute; top: 10px; left: 10px; background: #e2e8f0; padding: 2px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: bold; }
+        .task-card { background: white; border: 2px solid #f1f5f9; border-radius: 15px; padding: 15px; margin-bottom: 15px; }
         .lunch-row { background: #fef3c7 !important; font-weight: bold; color: #92400e; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #f1f5f9; padding: 10px; text-align: center; font-size: 0.85rem; }
@@ -369,7 +361,6 @@
             window.currentLangTask = window.currentLangTask === 'ar' ? 'fr' : 'ar';
             document.getElementById('tasksAppContainer').dir = window.currentLangTask === 'ar' ? 'rtl' : 'ltr';
             document.getElementById('langSwitcherTask').innerText = window.currentLangTask === 'ar' ? 'Français' : 'العربية';
-            
             const d = dictTask[window.currentLangTask];
             document.getElementById('titleTask').innerText = d.title;
             document.getElementById('lblStart').innerText = d.start;
@@ -393,59 +384,98 @@
             const lStart = toM(document.getElementById('lunchStart').value);
             const lDur = parseInt(document.getElementById('lunchDuration').value);
             const netM = (endM - startM) - lDur;
-
             const n = parseInt(document.getElementById('totalW').value);
             const males = parseInt(document.getElementById('males').value);
             const qual = parseInt(document.getElementById('qual').value);
             const tCount = parseInt(document.getElementById('tables').value);
 
-            window.lastCalcTask = { mDur: netM/(Math.floor(n/2)), aDur: netM/males, miragePer: (netM*tCount)/qual };
+            window.lastCalcTask = { 
+                mDur: netM/(Math.floor(n/2)), 
+                aDur: netM/males, 
+                miragePer: (netM*tCount)/qual,
+                startM, lStart, lDur, n, males, qual
+            };
             document.getElementById('actionGroupTask').style.display = 'grid';
             document.getElementById('offsetDisplayInTable').style.display = 'block';
             document.getElementById('offsetDisplayInTable').innerText = dictTask[window.currentLangTask].offset + window.currentOffsetTask;
             
             let html = `<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">`;
-            html += window.genCardTask("Multivac", Math.floor(n/2), window.lastCalcTask.mDur, dictTask[window.currentLangTask].pair, startM, lStart, lDur);
-            html += window.genCardTask("Alimentation", males, window.lastCalcTask.aDur, dictTask[window.currentLangTask].operator, startM, lStart, lDur);
+            // تمت إضافة حاصل الدقائق بجانب العنوان هنا
+            html += window.genCardTask(`Multivac (${Math.floor(window.lastCalcTask.mDur)} ${dictTask[window.currentLangTask].min})`, Math.floor(n/2), window.lastCalcTask.mDur, dictTask[window.currentLangTask].pair, startM, lStart, lDur);
+            html += window.genCardTask(`Alimentation (${Math.floor(window.lastCalcTask.aDur)} ${dictTask[window.currentLangTask].min})`, males, window.lastCalcTask.aDur, dictTask[window.currentLangTask].operator, startM, lStart, lDur);
             
-            // Mirage Card
             let mirHtml = `<div class="task-card"><h3>Mirage</h3><table>`;
-            for(let i=1; i<=qual; i++) { mirHtml += `<tr><td>${dictTask[window.currentLangTask].qualified} ${i}</td><td><b>${window.lastCalcTask.miragePer.toFixed(1)} ${dictTask[window.currentLangTask].min}</b></td></tr>`; }
+            for(let i=1; i<=qual; i++) { mirHtml += `<tr><td>${dictTask[window.currentLangTask].qualified} ${i}</td><td><b>${Math.floor(window.lastCalcTask.miragePer)} ${dictTask[window.currentLangTask].min}</b></td></tr>`; }
             html += mirHtml + `</table></div></div>`;
             document.getElementById('resultsTask').innerHTML = html;
         }
 
         window.genCardTask = function(title, count, duration, label, start, lStart, lDur) {
             let rows = ""; let currentTime = start; let lunchDone = false;
-            const fmt = (m) => `${(Math.floor(m/60)%24).toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}`;
+            const fmt = (m) => `${(Math.floor(m/60)%24).toString().padStart(2,'0')}:${(Math.floor(m%60)).toString().padStart(2,'0')}`;
             for(let i=0; i<count; i++) {
                 let pEnd = currentTime + duration;
                 if(!lunchDone && currentTime < lStart && pEnd > lStart) {
+                    rows += `<tr><td>${fmt(currentTime)} - ${fmt(lStart)}</td><td><b>${label} ${i+1} (P1)</b></td></tr>`;
                     rows += `<tr class="lunch-row"><td colspan="2">${dictTask[window.currentLangTask].lunchBreak}</td></tr>`;
-                    currentTime += lDur; pEnd = currentTime + duration; lunchDone = true;
+                    let rem = pEnd - lStart;
+                    currentTime = lStart + lDur; 
+                    pEnd = currentTime + rem;
+                    rows += `<tr><td>${fmt(currentTime)} - ${fmt(pEnd)}</td><td><b>${label} ${i+1} (P2)</b></td></tr>`;
+                    lunchDone = true;
+                } else {
+                    rows += `<tr><td>${fmt(currentTime)} - ${fmt(pEnd)}</td><td><b>${label} ${i+1}</b></td></tr>`;
                 }
-                rows += `<tr><td>${fmt(currentTime)} - ${fmt(pEnd)}</td><td><b>${label} ${i+1}</b></td></tr>`;
                 currentTime = pEnd;
             }
             return `<div class="task-card"><h3>${title}</h3><table>${rows}</table></div>`;
         }
 
         window.shareWhatsAppTask = function() {
-            let msg = `*${dictTask[window.currentLangTask].title}*%0AOffset: ${window.currentOffsetTask}`;
+            const d = dictTask[window.currentLangTask];
+            const fmt = (m) => `${(Math.floor(m/60)%24).toString().padStart(2,'0')}:${(Math.floor(m%60)).toString().padStart(2,'0')}`;
+            let msg = `*${d.title}*%0A*Offset:* ${window.currentOffsetTask}%0A%0A`;
+            
+            // تمت إضافة حاصل الدقائق في الواتساب هنا
+            msg += `🚀 *Multivac (${Math.floor(window.lastCalcTask.mDur)} ${d.min}):*%0A`;
+            let currM = window.lastCalcTask.startM; let lDoneM = false;
+            for(let i=0; i<Math.floor(window.lastCalcTask.n/2); i++){
+                let end = currM + window.lastCalcTask.mDur;
+                if(!lDoneM && currM < window.lastCalcTask.lStart && end > window.lastCalcTask.lStart){
+                    msg += `• ${fmt(currM)}-${fmt(window.lastCalcTask.lStart)} : ${d.pair} ${i+1} (P1)%0A`;
+                    msg += `🍱 _${d.lunchBreak}_%0A`;
+                    let rem = end - window.lastCalcTask.lStart; currM = window.lastCalcTask.lStart + window.lastCalcTask.lDur; end = currM + rem;
+                    msg += `• ${fmt(currM)}-${fmt(end)} : ${d.pair} ${i+1} (P2)%0A`; lDoneM = true;
+                } else { msg += `• ${fmt(currM)}-${fmt(end)} : ${d.pair} ${i+1}%0A`; }
+                currM = end;
+            }
+            
+            // تمت إضافة حاصل الدقائق في الواتساب هنا
+            msg += `%0A🍱 *Alimentation (${Math.floor(window.lastCalcTask.aDur)} ${d.min}):*%0A`;
+            let currA = window.lastCalcTask.startM; let lDoneA = false;
+            for(let i=0; i<window.lastCalcTask.males; i++){
+                let end = currA + window.lastCalcTask.aDur;
+                if(!lDoneA && currA < window.lastCalcTask.lStart && end > window.lastCalcTask.lStart){
+                    msg += `• ${fmt(currA)}-${fmt(window.lastCalcTask.lStart)} : ${d.operator} ${i+1} (P1)%0A`;
+                    msg += `🍱 _${d.lunchBreak}_%0A`;
+                    let rem = end - window.lastCalcTask.lStart; currA = window.lastCalcTask.lStart + window.lastCalcTask.lDur; end = currA + rem;
+                    msg += `• ${fmt(currA)}-${fmt(end)} : ${d.operator} ${i+1} (P2)%0A`; lDoneA = true;
+                } else { msg += `• ${fmt(currA)}-${fmt(end)} : ${d.operator} ${i+1}%0A`; }
+                currA = end;
+            }
+            msg += `%0A🔍 *Mirage:*%0A• ${Math.floor(window.lastCalcTask.miragePer)} ${d.min} / ${d.qualified}`;
             window.open("https://wa.me/?text=" + msg);
         }
     </script>
 </div>
 </script>
+
     <script id="code_cleaning" type="text/plain"><div id="lotteryAppContainer">
     <style>
         #lotteryAppContainer { --primary: #0284c7; --success: #22c55e; --bg: #f1f5f9; --danger: #ef4444; --accent: #7c3aed; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); padding: 10px; }
         .container-lot { max-width: 800px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        
-        /* تنسيق الهيدر لمنع تداخل الزر مع العنوان */
         .header-lot { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; gap: 10px; }
         .lang-btn-lot { background: #475569; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: bold; white-space: nowrap; }
-        
         .setup-box { background: #f1f5f9; padding: 15px; border-radius: 15px; margin-bottom: 20px; }
         .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
         input, select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; }
@@ -455,15 +485,14 @@
         .btn-draw { background: var(--accent); width: 100%; font-size: 1.1rem; margin-top: 10px; }
         .worker-tag { display: inline-flex; align-items: center; background: white; padding: 5px 12px; border-radius: 20px; margin: 5px; border: 1px solid #e2e8f0; font-size: 0.85rem; }
         .worker-tag button { background: none; border: none; color: var(--danger); margin-right: 8px; cursor: pointer; }
-        
         #loaderLot { display: none; text-align: center; margin: 30px 0; }
         .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; animation: spinLot 1s linear infinite; margin: auto; }
         @keyframes spinLot { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #f1f5f9; padding: 12px; text-align: center; }
         .hall-title { color: var(--primary); font-weight: bold; margin-top: 10px; display: block; text-align: center; text-decoration: underline; }
         .names-list { font-size: 1.2rem; font-weight: bold; color: #1e293b; display: block; margin: 10px 0; text-align: center; }
+        .lot-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
     </style>
 
     <div class="container-lot">
@@ -509,16 +538,19 @@
         <div id="resultAreaLot" style="display:none; margin-top:20px; border:2px solid #e2e8f0; border-radius:15px; padding:15px;">
             <div id="currentDateDisplayLot" style="font-weight:bold; text-align:center; margin-bottom:15px; color:#475569;"></div>
             <div id="outputContentLot"></div>
+            <div class="lot-actions">
+                <button class="btn" style="background:#25d366" onclick="window.shareLotteryWA()" id="btnLotWA">واتساب 📱</button>
+                <button class="btn" style="background:#e11d48" onclick="window.print()" id="btnLotPDF">حفظ PDF 📄</button>
+            </div>
         </div>
     </div>
 
     <script>
         window.currentLangLot = 'ar';
         window.workersLot = [];
-        
         const dictLot = {
-            ar: { sub: "نظام تنظيم تنظيف القاعات", add: "1. أسماء العمال المتوفرين:", place: "أدخل اسم العامل...", addBtn: "إضافة +", mode: "2. نظام التوزيع:", mode1: "قاعة واحدة (أسبوعي)", mode2: "قاعتان (تقسيم الكل)", perDay: "3. عمال لكل يوم:", draw: "إجراء القرعة 🎲", loading: "جاري خلط الأسماء وإجراء القرعة العادلة...", datePre: "تاريخ اليوم: ", hall1: "القاعة الأولى (Suremballage)", hall2: "القاعة الثانية (Amarow)", days: ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"] },
-            fr: { sub: "Système de Nettoyage", add: "1. Liste des ouvriers:", place: "Nom de l'ouvrier...", addBtn: "Ajouter +", mode: "2. Système de distribution:", mode1: "Une salle (Hebdo)", mode2: "Deux salles (Division)", perDay: "3. Ouvriers par jour:", draw: "Lancer le tirage 🎲", loading: "Mélange des noms...", datePre: "Date: ", hall1: "Première Salle", hall2: "Deuxième Salle", days: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"] }
+            ar: { sub: "نظام تنظيم تنظيف القاعات", add: "1. أسماء العمال المتوفرين:", place: "أدخل اسم العامل...", addBtn: "إضافة +", mode: "2. نظام التوزيع:", mode1: "قاعة واحدة (أسبوعي)", mode2: "قاعتان (تقسيم الكل)", perDay: "3. عمال لكل يوم:", draw: "إجراء القرعة 🎲", loading: "جاري خلط الأسماء وإجراء القرعة العادلة...", datePre: "تاريخ اليوم: ", hall1: "القاعة الأولى (Suremballage)", hall2: "القاعة الثانية (Amarow)", days: ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"], wa: "واتساب 📱", pdf: "حفظ PDF 📄", luck: "بالتوفيق للجميع!" },
+            fr: { sub: "Système de Nettoyage", add: "1. Liste des ouvriers:", place: "Nom de l'ouvrier...", addBtn: "Ajouter +", mode: "2. Système de distribution:", mode1: "Une salle (Hebdo)", mode2: "Deux salles (Division)", perDay: "3. Ouvriers par jour:", draw: "Lancer le tirage 🎲", loading: "Mélange des noms...", datePre: "Date: ", hall1: "Première Salle", hall2: "Deuxième Salle", days: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], wa: "WhatsApp 📱", pdf: "Sauver PDF 📄", luck: "Bonne chance!" }
         };
 
         window.toggleLanguageLottery = function() {
@@ -536,23 +568,19 @@
             document.getElementById('lblPerDayLot').innerText = d.perDay;
             document.getElementById('btnDrawLot').innerText = d.draw;
             document.getElementById('loadingTxtLot').innerText = d.loading;
+            document.getElementById('btnLotWA').innerText = d.wa;
+            document.getElementById('btnLotPDF').innerText = d.pdf;
             if(window.workersLot.length > 0 && document.getElementById('resultAreaLot').style.display === 'block') window.generateDrawLottery();
         };
 
         window.addWorkerLottery = function() {
             const input = document.getElementById('workerNameLot');
             const name = input.value.trim();
-            if(name && !window.workersLot.includes(name)) {
-                window.workersLot.push(name);
-                window.renderWorkersLottery();
-                input.value = '';
-            }
+            if(name && !window.workersLot.includes(name)) { window.workersLot.push(name); window.renderWorkersLottery(); input.value = ''; }
         };
 
         window.renderWorkersLottery = function() {
-            document.getElementById('workersListLot').innerHTML = window.workersLot.map((w, i) => `
-                <span class="worker-tag">${w} <button onclick="window.removeWorkerLottery(${i})">×</button></span>
-            `).join('');
+            document.getElementById('workersListLot').innerHTML = window.workersLot.map((w, i) => `<span class="worker-tag">${w} <button onclick="window.removeWorkerLottery(${i})">×</button></span>`).join('');
         };
 
         window.removeWorkerLottery = function(index) { window.workersLot.splice(index, 1); window.renderWorkersLottery(); };
@@ -572,7 +600,7 @@
                 document.getElementById('loaderLot').style.display = 'none';
                 document.getElementById('resultAreaLot').style.display = 'block';
                 document.getElementById('btnDrawLot').disabled = false;
-            }, 3000); // قللت الوقت لـ 3 ثواني للسرعة، يمكنك إعادته لـ 10 إذا أردت
+            }, 3000);
         };
 
         window.generateDrawLottery = function() {
@@ -580,56 +608,51 @@
             const d = dictLot[window.currentLangLot];
             const dateStr = new Date().toLocaleDateString(window.currentLangLot === 'ar' ? 'ar-MA' : 'fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             document.getElementById('currentDateDisplayLot').innerText = d.datePre + dateStr;
-            
-            let shuffled = [...window.workersLot].sort(() => Math.random() - 0.5);
+            let shuf = [...window.workersLot].sort(() => Math.random() - 0.5);
             let html = '';
-
             if(mode === "1") {
                 const perDay = parseInt(document.getElementById('perDayLot').value);
-                while(shuffled.length < (d.days.length * perDay)) shuffled = shuffled.concat([...window.workersLot].sort(() => Math.random() - 0.5));
+                while(shuf.length < (d.days.length * perDay)) shuf = shuf.concat([...window.workersLot].sort(() => Math.random() - 0.5));
                 html = `<table><thead><tr><th>${window.currentLangLot==='ar'?'اليوم':'Jour'}</th><th>${window.currentLangLot==='ar'?'المنظفين':'Nettoyage'}</th></tr></thead><tbody>`;
                 let idx = 0;
-                d.days.forEach(day => {
-                    let group = shuffled.slice(idx, idx + perDay);
-                    idx += perDay;
-                    html += `<tr><td><b>${day}</b></td><td>${group.join(' - ')}</td></tr>`;
-                });
+                d.days.forEach(day => { let group = shuf.slice(idx, idx + perDay); idx += perDay; html += `<tr><td><b>${day}</b></td><td>${group.join(' - ')}</td></tr>`; });
                 html += `</tbody></table>`;
             } else {
-                const half = Math.ceil(shuffled.length / 2);
-                html = `<span class="hall-title">${d.hall1}</span><span class="names-list">${shuffled.slice(0, half).join(' - ')}</span>
-                        <hr style="border:1px solid #f1f5f9; margin:15px 0;"><span class="hall-title">${d.hall2}</span>
-                        <span class="names-list">${shuffled.slice(half).join(' - ')}</span>`;
+                const half = Math.ceil(shuf.length / 2);
+                html = `<span class="hall-title">${d.hall1}</span><span class="names-list">${shuf.slice(0, half).join(' - ')}</span><hr style="border:1px solid #f1f5f9; margin:15px 0;"><span class="hall-title">${d.hall2}</span><span class="names-list">${shuf.slice(half).join(' - ')}</span>`;
             }
             document.getElementById('outputContentLot').innerHTML = html;
         };
+
+        window.shareLotteryWA = function() {
+            const d = dictLot[window.currentLangLot];
+            const dateStr = document.getElementById('currentDateDisplayLot').innerText;
+            const content = document.getElementById('outputContentLot').innerText;
+            let msg = `✨ *${dateStr}* ✨%0A%0A${content.replace(/\n/g, '%0A')}%0A%0A🍀 *${d.luck}*`;
+            window.open("https://wa.me/?text=" + msg);
+        }
     </script>
 </div>
 </script>
 
     <script>
         function toggleModal(s){ document.getElementById('devModal').style.display=s?'flex':'none'; }
-        
         function launchApp(id){
             const mainMenu = document.getElementById('mainMenu');
             const appContainer = document.getElementById('appContainer');
             const injectArea = document.getElementById('injectArea');
             let rawCode = document.getElementById('code_'+id).innerHTML;
-            
             injectArea.innerHTML = rawCode;
-            
             const scripts = injectArea.getElementsByTagName("script");
             for (let i = 0; i < scripts.length; i++) {
                 const newScript = document.createElement("script");
                 newScript.text = scripts[i].text;
                 document.head.appendChild(newScript).parentNode.removeChild(newScript);
             }
-
             mainMenu.style.display = 'none';
             appContainer.style.display = 'block';
             window.scrollTo(0,0);
         }
-
         function goHome(){ location.reload(); }
     </script>
 </body>
