@@ -2,75 +2,54 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARWA GEST - Central Hub</title>
     <style>
         :root { --primary: #0f172a; --accent: #1e40af; --bg: #f8fafc; --card: #ffffff; --text-main: #1e293b; }
         [data-theme="dark"] { --primary: #1e293b; --accent: #3b82f6; --bg: #0f172a; --card: #1e293b; --text-main: #f1f5f9; }
         
-        body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%;
-            height: 100%; /* ضمان ملء الشاشة */
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background: var(--bg); 
-            color: var(--text-main); 
-            transition: 0.3s;
-            
-            /* --- الحل السحري للمشكلة --- */
-            /* هذا السطر يمنع "سحب الصفحة للتحديث" (Pull to Refresh) */
-            overscroll-behavior-y: contain;
-            
-            /* السماح بالتمرير العمودي بشكل طبيعي جداً */
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; /* نعومة التمرير في الآيفون */
-
-            /* منع تحديد النصوص لتجربة تشبه التطبيق */
-            -webkit-user-select: none; 
-            user-select: none;
+        body, html { margin: 0; padding: 0; min-height: 100vh; font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text-main); transition: 0.3s; }
+        
+        /* --- تنسيقات شاشة القفل --- */
+        #lockScreen { 
+            position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%); 
+            display: flex; justify-content: center; align-items: center; z-index: 100000; color: white; 
         }
-
-        /* تنسيق القائمة الرئيسية */
-        #mainMenu { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 20px; 
-            min-height: 100%; /* لضمان أن الخلفية تغطي الصفحة حتى لو المحتوى قصير */
-            box-sizing: border-box;
+        .lock-container { 
+            width: 85%; max-width: 350px; padding: 30px; background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(10px); border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.2); 
+            text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
         }
+        #passInput { 
+            width: 100%; padding: 15px; margin: 20px 0; border-radius: 12px; border: 2px solid transparent; 
+            font-size: 1.5rem; text-align: center; outline: none; box-sizing: border-box; color: #1e293b;
+        }
+        .btn-login { 
+            width: 100%; padding: 15px; border-radius: 12px; border: none; background: white; 
+            color: #1e40af; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s;
+        }
+        .btn-login:active { transform: scale(0.95); }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        /* ---------------------------------- */
 
+        #mainMenu { display: flex; flex-direction: column; align-items: center; padding: 20px; }
         .header-brand { text-align: center; margin-bottom: 30px; margin-top: 10px; }
         .header-brand h1 { color: var(--primary); font-size: 2.5rem; margin: 0; letter-spacing: 3px; font-weight: 900; }
         .header-brand p { color: var(--accent); font-weight: bold; margin-top: 5px; }
         .menu-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px; }
-        
         .nav-button {
             background: var(--card); border: 1px solid #e2e8f0; padding: 18px;
             border-radius: 18px; display: flex; align-items: center; gap: 15px;
             cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             transition: 0.3s; color: var(--text-main);
-            /* ضمان عدم تداخل اللمس */
-            touch-action: manipulation;
         }
         .nav-button:hover { transform: translateY(-3px); border-color: var(--accent); }
         .icon { width: 45px; height: 45px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
-        
-        /* حاوية التطبيقات */
-        #appContainer { 
-            display: none; 
-            width: 100%; 
-            min-height: 100%; 
-            background: var(--bg); 
-            padding-bottom: 50px; /* مسافة أمان في الأسفل للتمرير */
-        }
-
-        .back-bar { background: var(--primary); color: white; padding: 15px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: bold; position: sticky; top: 0; z-index: 9999; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #appContainer { display: none; width: 100%; min-height: 100vh; background: var(--bg); }
+        .back-bar { background: var(--primary); color: white; padding: 15px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: bold; position: sticky; top: 0; z-index: 9999; }
         
         .theme-switch { position: absolute; top: 20px; left: 20px; cursor: pointer; padding: 10px; background: var(--card); border-radius: 50%; border: 1px solid var(--accent); }
 
-        /* Modal Styles */
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .modal-content { background: var(--card); padding: 0; border-radius: 24px; width: 85%; max-width: 350px; text-align: center; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); animation: slideUp 0.3s ease-out; color: var(--text-main); }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -85,7 +64,17 @@
 </head>
 <body>
 
-    <div id="mainMenu">
+    <div id="lockScreen">
+        <div class="lock-container">
+            <div style="font-size: 3.5rem; margin-bottom: 10px;">🔐</div>
+            <h2 style="margin: 0; font-size: 1.8rem;">ARWA GEST</h2>
+            <p style="opacity: 0.8; margin-top: 5px;">نظام محمي برمز سري</p>
+            <input type="password" id="passInput" placeholder="أدخل الرمز هنا" onkeypress="if(event.key==='Enter') checkMasterPass()">
+            <button class="btn-login" onclick="checkMasterPass()">دخول</button>
+        </div>
+    </div>
+
+    <div id="mainMenu" style="display: none;">
         <div class="theme-switch" onclick="toggleTheme()">🌓</div>
         <div class="header-brand">
             <h1>ARWA GEST</h1>
@@ -182,118 +171,185 @@
                 th, td { border: 1px solid #f1f5f9; padding: 10px; text-align: center; font-size: 0.85rem; }
                 .footer-task { text-align: center; margin-top: 30px; font-size: 0.75rem; color: #94a3b8; border-top: 1px solid #eee; padding-top: 15px; }
             </style>
+
             <div class="container-task">
                 <div class="header-task">
                     <h2 id="titleTask">Salle Suremballage</h2>
                     <button class="lang-btn-task" onclick="window.toggleLanguageTask()" id="langSwitcherTask">Français</button>
                 </div>
                 <div id="offsetDisplayInTable" style="display:none; color:var(--danger); font-weight:bold; text-align:center; margin-bottom:10px;"></div>
+
                 <div class="setup-section">
                     <div class="input-box"><label id="lblStart">بداية التعبئة</label><input type="time" id="startTime" value="17:00"></div>
                     <div class="input-box"><label id="lblEnd">نهاية التعبئة</label><input type="time" id="endTime" value="01:00"></div>
                     <div class="input-box"><label id="lblOffset">الإزاحة (1-6)</label><button class="btn-plus" onclick="window.incrementOffsetTask()" id="offsetBtnTask">+1 (1)</button></div>
                 </div>
+
                 <div class="lunch-section">
                     <div class="input-box"><label id="lblLunchStart">وقت الاستراحة (بداية)</label><input type="time" id="lunchStart" value="22:00"></div>
-                    <div class="input-box"><label id="lblLunchDur">مدة الاستراحة</label><select id="lunchDuration"><option value="60">60 دقيقة</option><option value="30">30 دقيقة</option><option value="0">0 دقيقة</option></select></div>
+                    <div class="input-box"><label id="lblLunchDur">مدة الاستراحة</label>
+                        <select id="lunchDuration"><option value="60">60 دقيقة</option><option value="30">30 دقيقة</option><option value="0">0 دقيقة</option></select>
+                    </div>
                 </div>
+
                 <div class="setup-section">
                     <div class="input-box"><label id="lblTotalW">Effectif total</label><select id="totalW"></select></div>
                     <div class="input-box"><label id="lblMales">الأوبراتور</label><select id="males"></select></div>
                     <div class="input-box"><label id="lblQual">المؤهلين للميراج</label><select id="qual"></select></div>
                     <div class="input-box"><label id="lblTables">طاولات الميراج</label><select id="tables"></select></div>
                 </div>
+
                 <button class="main-btn" onclick="window.calculateTask()" id="btnGenerateTask">توليد الجدول المحدث</button>
-                <div class="action-btns" id="actionGroupTask"><button class="whatsapp-btn" onclick="window.shareWhatsAppTask()" id="btnWATask">واتساب 📱</button><button class="pdf-btn" onclick="window.print()" id="btnPDFTask">حفظ PDF 📄</button></div>
+                <div class="action-btns" id="actionGroupTask">
+                    <button class="whatsapp-btn" onclick="window.shareWhatsAppTask()" id="btnWATask">واتساب 📱</button>
+                    <button class="pdf-btn" onclick="window.print()" id="btnPDFTask">حفظ PDF 📄</button>
+                </div>
+
                 <div id="resultsTask"></div>
                 <div class="footer-task">Created by YOUSSEF HADI</div>
             </div>
+
             <script>
-                window.currentLangTask = 'ar'; window.currentOffsetTask = 1; window.lastCalcTask = null;
-                const dictTask = { ar: { title: "Salle Suremballage", offset: "الإزاحة: ", start: "بداية التعبئة", end: "نهاية التعبئة", workers: "Effectif total", males: "الأوبراتور", qual: "المؤهلين للميراج", tables: "طاولات الميراج", lunchS: "وقت الاستراحة (بداية)", lunchD: "مدة الاستراحة", lunchBreak: "--- استراحة ---", generate: "توليد الجدول", wa: "واتساب 📱", pdf: "حفظ PDF 📄", pair: "الثنائي", operator: "الأوبراتور", qualified: "المؤهل رقم", dur: "د/دورة", min: "دقيقة" }, fr: { title: "Salle Suremballage", offset: "Offset: ", start: "Début de remplissage", end: "Arrêt de remplissage", workers: "Effectif total", males: "Opérateurs", qual: "Qualifiés pour Mirage", tables: "Tables de Mirage", lunchS: "Début de pause", lunchD: "Durée de pause", lunchBreak: "--- الاستراحة ---", generate: "Générer", wa: "WhatsApp 📱", pdf: "Sauver PDF 📄", pair: "Binôme", operator: "Opérateur", qualified: "Qualifié N°", dur: "min/tour", min: "min" } };
+                window.currentLangTask = 'ar';
+                window.currentOffsetTask = 1;
+                window.lastCalcTask = null;
+
+                const dictTask = {
+                    ar: { title: "Salle Suremballage", offset: "الإزاحة: ", start: "بداية التعبئة", end: "نهاية التعبئة", workers: "Effectif total", males: "الأوبراتور", qual: "المؤهلين للميراج", tables: "طاولات الميراج", lunchS: "وقت الاستراحة (بداية)", lunchD: "مدة الاستراحة", lunchBreak: "--- استراحة ---", generate: "توليد الجدول", wa: "واتساب 📱", pdf: "حفظ PDF 📄", pair: "الثنائي", operator: "الأوبراتور", qualified: "المؤهل رقم", dur: "د/دورة", min: "دقيقة" },
+                    fr: { title: "Salle Suremballage", offset: "Offset: ", start: "Début de remplissage", end: "Arrêt de remplissage", workers: "Effectif total", males: "Opérateurs", qual: "Qualifiés pour Mirage", tables: "Tables de Mirage", lunchS: "Début de pause", lunchD: "Durée de pause", lunchBreak: "--- الاستراحة ---", generate: "Générer", wa: "WhatsApp 📱", pdf: "Sauver PDF 📄", pair: "Binôme", operator: "Opérateur", qualified: "Qualifié N°", dur: "min/tour", min: "min" }
+                };
+
                 window.fillSelectsTask = function() {
                     const fill = (id, s, e, sel) => {
-                        const el = document.getElementById(id); if(!el) return; el.innerHTML = "";
-                        for(let i=s; i<=e; i++) { let opt = document.createElement('option'); opt.value = i; opt.innerText = i; if(i === sel) opt.selected = true; el.appendChild(opt); }
+                        const el = document.getElementById(id); if(!el) return;
+                        el.innerHTML = "";
+                        for(let i=s; i<=e; i++) {
+                            let opt = document.createElement('option');
+                            opt.value = i; opt.innerText = i;
+                            if(i === sel) opt.selected = true;
+                            el.appendChild(opt);
+                        }
                     };
                     fill('totalW', 8, 15, 10); fill('males', 1, 15, 7); fill('qual', 1, 15, 6); fill('tables', 1, 5, 3);
-                };
+                }
                 window.fillSelectsTask();
-                window.incrementOffsetTask = function() { window.currentOffsetTask = window.currentOffsetTask >= 6 ? 1 : window.currentOffsetTask + 1; document.getElementById('offsetBtnTask').innerText = "+1 (" + window.currentOffsetTask + ")"; };
+
+                window.incrementOffsetTask = function() {
+                    window.currentOffsetTask = window.currentOffsetTask >= 6 ? 1 : window.currentOffsetTask + 1;
+                    document.getElementById('offsetBtnTask').innerText = "+1 (" + window.currentOffsetTask + ")";
+                }
+
                 window.toggleLanguageTask = function() {
                     window.currentLangTask = window.currentLangTask === 'ar' ? 'fr' : 'ar';
                     document.getElementById('tasksAppContainer').dir = window.currentLangTask === 'ar' ? 'rtl' : 'ltr';
                     document.getElementById('langSwitcherTask').innerText = window.currentLangTask === 'ar' ? 'Français' : 'العربية';
                     const d = dictTask[window.currentLangTask];
-                    document.getElementById('titleTask').innerText = d.title; document.getElementById('lblStart').innerText = d.start; document.getElementById('lblEnd').innerText = d.end;
-                    document.getElementById('lblLunchStart').innerText = d.lunchS; document.getElementById('lblLunchDur').innerText = d.lunchD;
-                    document.getElementById('lblTotalW').innerText = d.workers; document.getElementById('lblMales').innerText = d.males;
-                    document.getElementById('lblQual').innerText = d.qual; document.getElementById('lblTables').innerText = d.tables;
-                    document.getElementById('btnGenerateTask').innerText = d.generate; document.getElementById('btnWATask').innerText = d.wa; document.getElementById('btnPDFTask').innerText = d.pdf;
+                    document.getElementById('titleTask').innerText = d.title;
+                    document.getElementById('lblStart').innerText = d.start;
+                    document.getElementById('lblEnd').innerText = d.end;
+                    document.getElementById('lblLunchStart').innerText = d.lunchS;
+                    document.getElementById('lblLunchDur').innerText = d.lunchD;
+                    document.getElementById('lblTotalW').innerText = d.workers;
+                    document.getElementById('lblMales').innerText = d.males;
+                    document.getElementById('lblQual').innerText = d.qual;
+                    document.getElementById('lblTables').innerText = d.tables;
+                    document.getElementById('btnGenerateTask').innerText = d.generate;
+                    document.getElementById('btnWATask').innerText = d.wa;
+                    document.getElementById('btnPDFTask').innerText = d.pdf;
                     if(window.lastCalcTask) window.calculateTask();
-                };
+                }
+
+                // تطبيق المعادلة الصارمة
                 window.calculateTask = function() {
                     const toM = (s) => { const [h,m]=s.split(':').map(Number); return h*60+m; };
                     let startM = toM(document.getElementById('startTime').value);
                     let endM = toM(document.getElementById('endTime').value);
                     if (endM <= startM) endM += 1440;
+                    
                     const lStart = toM(document.getElementById('lunchStart').value);
                     const lDur = parseInt(document.getElementById('lunchDuration').value);
                     const lEnd = lStart + lDur;
+
                     const n = parseInt(document.getElementById('totalW').value);
                     const males = parseInt(document.getElementById('males').value);
                     const qual = parseInt(document.getElementById('qual').value);
                     const tCount = parseInt(document.getElementById('tables').value);
+
+                    // صافي الدقائق = الكلي - الاستراحة
                     const netM = (endM - startM) - lDur;
-                    window.lastCalcTask = { mDur: netM / Math.floor(n/2), aDur: netM / males, miragePer: (netM * tCount) / qual, startM, lStart, lDur, lEnd, n, males, qual, endM };
+                    
+                    window.lastCalcTask = { 
+                        mDur: netM / Math.floor(n/2), 
+                        aDur: netM / males, 
+                        miragePer: (netM * tCount) / qual,
+                        startM, lStart, lDur, lEnd, n, males, qual, endM
+                    };
+
                     document.getElementById('actionGroupTask').style.display = 'grid';
                     document.getElementById('offsetDisplayInTable').style.display = 'block';
                     document.getElementById('offsetDisplayInTable').innerText = dictTask[window.currentLangTask].offset + window.currentOffsetTask;
+                    
                     let html = `<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">`;
                     html += window.genCardTask(`Multivac (${Math.floor(window.lastCalcTask.mDur)} ${dictTask[window.currentLangTask].min})`, Math.floor(n/2), window.lastCalcTask.mDur, dictTask[window.currentLangTask].pair, startM, endM, lStart, lDur, lEnd, window.currentOffsetTask);
                     html += window.genCardTask(`Alimentation (${Math.floor(window.lastCalcTask.aDur)} ${dictTask[window.currentLangTask].min})`, males, window.lastCalcTask.aDur, dictTask[window.currentLangTask].operator, startM, endM, lStart, lDur, lEnd, window.currentOffsetTask);
+                    
                     let mirHtml = `<div class="task-card"><h3>Mirage</h3><table>`;
-                    for(let i=1; i<=qual; i++) {
+                    for(let i=1; i<=qual; i++) { 
                         let shiftedMir = ((i + window.currentOffsetTask - 2) % qual) + 1;
-                        mirHtml += `<tr><td>${dictTask[window.currentLangTask].qualified} ${shiftedMir}</td><td><b>${Math.floor(window.lastCalcTask.miragePer)} ${dictTask[window.currentLangTask].min}</b></td></tr>`;
+                        mirHtml += `<tr><td>${dictTask[window.currentLangTask].qualified} ${shiftedMir}</td><td><b>${Math.floor(window.lastCalcTask.miragePer)} ${dictTask[window.currentLangTask].min}</b></td></tr>`; 
                     }
                     html += mirHtml + `</table></div></div>`;
                     document.getElementById('resultsTask').innerHTML = html;
-                };
+                }
+
+                // دالة توليد الجدول التي تطبق منطق P1/P2
                 window.genCardTask = function(title, count, duration, label, start, endLimit, lStart, lDur, lEnd, offset) {
-                    let rows = ""; let currentPos = start; const fmt = (m) => `${(Math.floor(m/60)%24).toString().padStart(2,'0')}:${(Math.floor(m%60)).toString().padStart(2,'0')}`;
+                    let rows = ""; 
+                    let currentPos = start; 
+                    const fmt = (m) => `${(Math.floor(m/60)%24).toString().padStart(2,'0')}:${(Math.floor(m%60)).toString().padStart(2,'0')}`;
+
                     for(let i=0; i < count; i++) {
                         let workerId = ((i + (offset || 1) - 1) % count) + 1;
                         let timeLeft = duration;
                         let sW = workerId;
+
+                        // الحالة 1: قبل الاستراحة
                         if (currentPos < lStart) {
                             let spaceBefore = lStart - currentPos;
                             if (spaceBefore >= timeLeft) {
-                                let wEnd = currentPos + timeLeft; if (i === count - 1) wEnd = endLimit;
+                                let wEnd = currentPos + timeLeft;
+                                if (i === count - 1) wEnd = endLimit;
                                 rows += `<tr><td>${fmt(currentPos)} - ${fmt(wEnd)}</td><td><b>${label} ${sW}</b></td></tr>`;
                                 currentPos = wEnd;
                             } else {
+                                // تطبيق المقص: P1 ثم استراحة ثم P2
                                 rows += `<tr><td>${fmt(currentPos)} - ${fmt(lStart)}</td><td><b>${label} ${sW} (P1)</b></td></tr>`;
                                 rows += `<tr class="lunch-row"><td colspan="2">${dictTask[window.currentLangTask].lunchBreak}</td></tr>`;
-                                let rem = timeLeft - spaceBefore; let p2End = lEnd + rem; if (i === count - 1) p2End = endLimit;
+                                let rem = timeLeft - spaceBefore;
+                                let p2End = lEnd + rem;
+                                if (i === count - 1) p2End = endLimit;
                                 rows += `<tr><td>${fmt(lEnd)} - ${fmt(p2End)}</td><td><b>${label} ${sW} (P2)</b></td></tr>`;
                                 currentPos = p2End;
                             }
-                        } else {
+                        } 
+                        // الحالة 2: بعد الاستراحة
+                        else {
                             if (currentPos < lEnd) currentPos = lEnd;
-                            let wEnd = currentPos + timeLeft; if (i === count - 1) wEnd = endLimit;
+                            let wEnd = currentPos + timeLeft;
+                            if (i === count - 1) wEnd = endLimit;
                             rows += `<tr><td>${fmt(currentPos)} - ${fmt(wEnd)}</td><td><b>${label} ${sW}</b></td></tr>`;
                             currentPos = wEnd;
                         }
                     }
                     return `<div class="task-card"><h3>${title}</h3><table>${rows}</table></div>`;
-                };
+                }
+
                 window.shareWhatsAppTask = function() {
-                    const d = dictTask[window.currentLangTask];
+                    const d = dictTask[window.currentLangTask]; const fmt = (m) => `${(Math.floor(m/60)%24).toString().padStart(2,'0')}:${(Math.floor(m%60)).toString().padStart(2,'0')}`;
                     let msg = `*🚀 ${d.title} (ARWA MEDIC) 🚀*%0A*Offset:* ${window.currentOffsetTask}%0A%0A`;
                     msg += document.getElementById('resultsTask').innerText.replace(/\n/g, '%0A');
                     window.open("https://wa.me/?text=" + msg);
-                };
+                }
             </script>
         </div>
     </script>
@@ -305,102 +361,110 @@
             <script>
                 window.currentLangLot = 'ar'; window.workersLot = [];
                 const dictLot = { ar: { sub: "نظام تنظيم تنظيف القاعات", add: "1. أسماء العمال المتوفرين:", place: "أدخل اسم العامل...", addBtn: "إضافة +", mode: "2. نظام التوزيع:", mode1: "قاعة واحدة (أسبوعي)", mode2: "قاعتان (تقسيم الكل)", perDay: "3. عمال لكل يوم:", draw: "إجراء القرعة 🎲", loading: "جاري خلط الأسماء...", datePre: "تاريخ اليوم: ", hall1: "Salle Suremballage", hall2: "Amarow", days: ["الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"], wa: "واتساب 📱", pdf: "حفظ PDF 📄", luck: "بالتوفيق للجميع!" }, fr: { sub: "Système de Nettoyage", add: "1. Liste des ouvriers:", place: "Nom de l'ouvrier...", addBtn: "Ajouter +", mode: "2. Système de distribution:", mode1: "Une salle (Hebdo)", mode2: "Deux salles (Division)", perDay: "3. Ouvriers par jour:", draw: "Lancer le tirage 🎲", loading: "Mélange des noms...", datePre: "Date: ", hall1: "Salle Suremballage", hall2: "Amarow", days: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], wa: "WhatsApp 📱", pdf: "Sauver PDF 📄", luck: "Bonne chance!" } };
-                window.toggleLanguageLottery = function() {
-                    window.currentLangLot = window.currentLangLot === 'ar' ? 'fr' : 'ar';
-                    const d = dictLot[window.currentLangLot];
-                    document.getElementById('lotteryAppContainer').dir = window.currentLangLot === 'ar' ? 'rtl' : 'ltr';
-                    document.getElementById('langSwitcherLot').innerText = window.currentLangLot === 'ar' ? 'Français' : 'العربية';
-                    document.getElementById('subTitleLot').innerText = d.sub; document.getElementById('lblAddLot').innerText = d.add;
-                    document.getElementById('workerNameLot').placeholder = d.place; document.getElementById('btnAddLot').innerText = d.addBtn;
-                    document.getElementById('lblModeLot').innerText = d.mode; document.getElementById('btnDrawLot').innerText = d.draw;
-                    document.getElementById('btnLotWA').innerText = d.wa; document.getElementById('btnLotPDF').innerText = d.pdf;
-                    if(window.workersLot.length > 0 && document.getElementById('resultAreaLot').style.display === 'block') window.generateDrawLottery();
-                };
-                window.addWorkerLottery = function() {
-                    const input = document.getElementById('workerNameLot'); const name = input.value.trim();
-                    if(name && !window.workersLot.includes(name)) { window.workersLot.push(name); window.renderWorkersLottery(); input.value = ''; }
-                };
+                window.toggleLanguageLottery = function() { window.currentLangLot = window.currentLangLot === 'ar' ? 'fr' : 'ar'; const d = dictLot[window.currentLangLot]; document.getElementById('lotteryAppContainer').dir = window.currentLangLot === 'ar' ? 'rtl' : 'ltr'; document.getElementById('langSwitcherLot').innerText = window.currentLangLot === 'ar' ? 'Français' : 'العربية'; document.getElementById('subTitleLot').innerText = d.sub; document.getElementById('lblAddLot').innerText = d.add; document.getElementById('workerNameLot').placeholder = d.place; document.getElementById('btnAddLot').innerText = d.addBtn; document.getElementById('lblModeLot').innerText = d.mode; document.getElementById('btnDrawLot').innerText = d.draw; document.getElementById('btnLotWA').innerText = d.wa; document.getElementById('btnLotPDF').innerText = d.pdf; if(window.workersLot.length > 0 && document.getElementById('resultAreaLot').style.display === 'block') window.generateDrawLottery(); };
+                window.addWorkerLottery = function() { const input = document.getElementById('workerNameLot'); const name = input.value.trim(); if(name && !window.workersLot.includes(name)) { window.workersLot.push(name); window.renderWorkersLottery(); input.value = ''; } };
                 window.renderWorkersLottery = function() { document.getElementById('workersListLot').innerHTML = window.workersLot.map((w, i) => `<span class="worker-tag">${w} <button onclick="window.removeWorkerLottery(${i})">×</button></span>`).join(''); };
                 window.removeWorkerLottery = function(index) { window.workersLot.splice(index, 1); window.renderWorkersLottery(); };
                 window.toggleOptionsLottery = function() { const mode = document.getElementById('hallModeLot').value; document.getElementById('dailyOptionLot').style.visibility = (mode === "1") ? "visible" : "hidden"; };
-                window.runLotteryLottery = function() {
-                    if(window.workersLot.length < 2) return alert(window.currentLangLot === 'ar' ? "أضف عمالاً أولاً!" : "Ajoutez des ouvriers!");
-                    document.getElementById('resultAreaLot').style.display = 'none'; document.getElementById('btnDrawLot').disabled = true;
-                    document.getElementById('loaderLot').style.display = 'block';
-                    setTimeout(() => { window.generateDrawLottery(); document.getElementById('loaderLot').style.display = 'none'; document.getElementById('resultAreaLot').style.display = 'block'; document.getElementById('btnDrawLot').disabled = false; }, 3000);
+                window.runLotteryLottery = function() { if(window.workersLot.length < 2) return alert(window.currentLangLot === 'ar' ? "أضف عمالاً أولاً!" : "Ajoutez des ouvriers!"); document.getElementById('resultAreaLot').style.display = 'none'; document.getElementById('btnDrawLot').disabled = true; document.getElementById('loaderLot').style.display = 'block'; setTimeout(() => { window.generateDrawLottery(); document.getElementById('loaderLot').style.display = 'none'; document.getElementById('resultAreaLot').style.display = 'block'; document.getElementById('btnDrawLot').disabled = false; }, 3000); };
+                window.generateDrawLottery = function() { 
+                    const mode = document.getElementById('hallModeLot').value; 
+                    const d = dictLot[window.currentLangLot]; 
+                    const dateStr = new Date().toLocaleDateString(window.currentLangLot === 'ar' ? 'ar-MA' : 'fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); 
+                    document.getElementById('currentDateDisplayLot').innerText = d.datePre + dateStr; 
+                    let shuf = [...window.workersLot].sort(() => Math.random() - 0.5); 
+                    let html = ''; 
+                    if(mode === "1") { 
+                        const perDay = parseInt(document.getElementById('perDayLot').value); 
+                        while(shuf.length < (d.days.length * perDay)) shuf = shuf.concat([...window.workersLot].sort(() => Math.random() - 0.5)); 
+                        html = `<table><thead><tr><th>${window.currentLangLot==='ar'?'اليوم':'Jour'}</th><th>${window.currentLangLot==='ar'?'المنظفين':'Nettoyage'}</th></tr></thead><tbody>`; 
+                        let idx = 0; d.days.forEach(day => { let group = shuf.slice(idx, idx + perDay); idx += perDay; html += `<tr><td><b>${day}</b></td><td>${group.join(' - ')}</td></tr>`; }); 
+                        html += `</tbody></table>`; 
+                    } else { 
+                        const half = Math.ceil(shuf.length / 2); 
+                        window.lotResH1 = shuf.slice(0, half); window.lotResH2 = shuf.slice(half);
+                        html = `<span class="hall-title">📍 ${d.hall1}</span><span class="names-list">${window.lotResH1.join(' - ')}</span><hr style="border:1px solid #f1f5f9; margin:15px 0;"><span class="hall-title">📍 ${d.hall2}</span><span class="names-list">${window.lotResH2.join(' - ')}</span>`; 
+                    } 
+                    document.getElementById('outputContentLot').innerHTML = html; 
                 };
-                window.generateDrawLottery = function() {
-                    const mode = document.getElementById('hallModeLot').value; const d = dictLot[window.currentLangLot];
-                    const dateStr = new Date().toLocaleDateString(window.currentLangLot === 'ar' ? 'ar-MA' : 'fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                    document.getElementById('currentDateDisplayLot').innerText = d.datePre + dateStr;
-                    let shuf = [...window.workersLot].sort(() => Math.random() - 0.5);
-                    let html = '';
-                    if(mode === "1") {
-                        const perDay = parseInt(document.getElementById('perDayLot').value);
-                        while(shuf.length < (d.days.length * perDay)) shuf = shuf.concat([...window.workersLot].sort(() => Math.random() - 0.5));
-                        html = `<table><thead><tr><th>${window.currentLangLot==='ar'?'اليوم':'Jour'}</th><th>${window.currentLangLot==='ar'?'المنظفين':'Nettoyage'}</th></tr></thead><tbody>`;
-                        let idx = 0; d.days.forEach(day => { let group = shuf.slice(idx, idx + perDay); idx += perDay; html += `<tr><td><b>${day}</b></td><td>${group.join(' - ')}</td></tr>`; });
-                        html += `</tbody></table>`;
-                    } else {
-                        const half = Math.ceil(shuf.length / 2); window.lotResH1 = shuf.slice(0, half); window.lotResH2 = shuf.slice(half);
-                        html = `<span class="hall-title">📍 ${d.hall1}</span><span class="names-list">${window.lotResH1.join(' - ')}</span><hr style="border:1px solid #f1f5f9; margin:15px 0;"><span class="hall-title">📍 ${d.hall2}</span><span class="names-list">${window.lotResH2.join(' - ')}</span>`;
-                    }
-                    document.getElementById('outputContentLot').innerHTML = html;
-                };
-                window.shareLotteryWA = function() {
-                    const d = dictLot[window.currentLangLot]; const dateStr = document.getElementById('currentDateDisplayLot').innerText;
+                window.shareLotteryWA = function() { 
+                    const d = dictLot[window.currentLangLot];
+                    const dateStr = document.getElementById('currentDateDisplayLot').innerText; 
                     let msg = `*🧹 ${d.sub} (ARWA MEDIC) 🧹*%0A%0A✨ *${dateStr}* ✨%0A%0A`;
                     const mode = document.getElementById('hallModeLot').value;
-                    if(mode === "2") { msg += `*🏢 ${d.hall1}:*%0A👤 ${window.lotResH1.join(' %0A👤 ')}%0A%0A`; msg += `*📦 ${d.hall2}:*%0A👤 ${window.lotResH2.join(' %0A👤 ')}%0A%0A`; }
-                    else { msg += document.getElementById('outputContentLot').innerText.replace(/\n/g, '%0A'); }
-                    msg += `%0A🍀 *${d.luck}*`; window.open("https://wa.me/?text=" + msg);
-                };
+                    if(mode === "2") {
+                        msg += `*🏢 ${d.hall1}:*%0A👤 ${window.lotResH1.join(' %0A👤 ')}%0A%0A`;
+                        msg += `*📦 ${d.hall2}:*%0A👤 ${window.lotResH2.join(' %0A👤 ')}%0A%0A`;
+                    } else {
+                        msg += document.getElementById('outputContentLot').innerText.replace(/\n/g, '%0A');
+                    }
+                    msg += `%0A🍀 *${d.luck}*`; 
+                    window.open("https://wa.me/?text=" + msg); 
+                }
             </script>
         </div>
     </script>
 
     <script>
-        // --- المنطق الأساسي للتطبيق ---
-        // تم حذف كود touchmove بالكامل لأنه سبب المشكلة
-        
-        // حماية زر الرجوع من الإغلاق الخطأ
-        window.addEventListener('popstate', function(event) {
-            if (document.getElementById('appContainer').style.display === 'block') {
-                if(confirm("هل تود العودة للقائمة الرئيسية؟")) {
-                    goHome();
-                } else {
-                    history.pushState({page: "app"}, "");
-                }
-            }
-        });
-
         function toggleTheme() {
-            const hasTheme = document.body.hasAttribute('data-theme');
-            hasTheme ? document.body.removeAttribute('data-theme') : document.body.setAttribute('data-theme', 'dark');
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+            }
         }
 
-        function toggleModal(show) {
-            document.getElementById('devModal').style.display = show ? 'flex' : 'none';
+        function toggleModal(s){ document.getElementById('devModal').style.display=s?'flex':'none'; }
+        
+        function checkMasterPass() {
+            const input = document.getElementById('passInput');
+            const lockScreen = document.getElementById('lockScreen');
+            const mainMenu = document.getElementById('mainMenu');
+            
+            if(input.value === "12341") {
+                lockScreen.style.display = 'none';
+                mainMenu.style.display = 'flex';
+            } else {
+                const container = document.querySelector('.lock-container');
+                container.style.animation = 'none';
+                container.offsetHeight; /* trigger reflow */
+                container.style.animation = 'shake 0.4s';
+                input.value = '';
+                input.focus();
+            }
         }
 
-        function launchApp(appId) {
+        function launchApp(id){
+            const mainMenu = document.getElementById('mainMenu');
+            const appContainer = document.getElementById('appContainer');
             const injectArea = document.getElementById('injectArea');
-            const appCode = document.getElementById('code_' + appId).innerHTML;
-            injectArea.innerHTML = appCode;
+            let rawCode = document.getElementById('code_'+id).innerHTML;
+            injectArea.innerHTML = rawCode;
             const scripts = injectArea.getElementsByTagName("script");
             for (let i = 0; i < scripts.length; i++) {
                 const newScript = document.createElement("script");
                 newScript.text = scripts[i].text;
                 document.head.appendChild(newScript).parentNode.removeChild(newScript);
             }
-            document.getElementById('mainMenu').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'block';
-            window.scrollTo(0, 0);
-            history.pushState({page: "app"}, "");
+            mainMenu.style.display = 'none';
+            appContainer.style.display = 'block';
+            window.scrollTo(0,0);
         }
 
-        function goHome() {
-            location.reload();
+        // --- التعديل هنا ---
+        function goHome(){ 
+            // 1. إخفاء التطبيق وإظهار القائمة فقط دون تحديث الصفحة
+            document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('mainMenu').style.display = 'flex';
+
+            // 2. تنظيف الذاكرة (إيقاف أي مؤقتات خاصة بالمنبهات)
+            if(window.timerInt) clearInterval(window.timerInt);
+            if(window.stopS) window.stopS();
+
+            // 3. مسح المحتوى المحقون لضمان بداية نظيفة في المرة القادمة
+            document.getElementById('injectArea').innerHTML = "";
         }
     </script>
 </body>
